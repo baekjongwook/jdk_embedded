@@ -1,27 +1,11 @@
-#include <JControl.h>
+/*
+ * JControl.c
+ *
+ *  Created on: FEB 11, 2023
+ *      Author: Jongwook Baek
+ */
 
-float MAF_Filter(MAF* dst, float rawdata)
-{
-	dst->OutputBuffer[dst->count] = rawdata;
-
-	float sum = 0.0;
-
-	for(int i = 0; i < MAF_SIZE; i++)
-	{
-		sum += dst->OutputBuffer[i];
-	}
-
-	dst->FilteredData = sum / MAF_SIZE;
-
-	dst->count++;
-
-	if(dst->count >= MAF_SIZE)
-	{
-		dst->count = 0;
-	}
-
-	return dst->FilteredData;
-}
+#include "JControl.h"
 
 void Get_Motor_Status(ENCODER* dst, TIM_TypeDef* TIMx)
 {
@@ -238,8 +222,6 @@ void PID_Control_Velocity(PID* dst, DIRECTION* DIRx, ENCODER* ENx, GPIO_TypeDef*
 		PID_Control(dst, target, ENx->RPM);
 	}
 
-	dst->FilteredOutput = MAF_Filter(&dst->filter, dst->output);
-
 	if(dst->output < 0)
 	{
 		if(DIRx->FrontEncoderDirection == CCW)
@@ -273,26 +255,26 @@ void PID_Control_Velocity(PID* dst, DIRECTION* DIRx, ENCODER* ENx, GPIO_TypeDef*
 		{
 		case 1:
 		{
-			LL_TIM_OC_SetCompareCH1(TIMx, -dst->FilteredOutput);
-			//TIMx->CCR1 = -dst->FilteredOutput;
+			LL_TIM_OC_SetCompareCH1(TIMx, -dst->output);
+			//TIMx->CCR1 = -dst->output;
 			break;
 		}
 		case 2:
 		{
-			LL_TIM_OC_SetCompareCH2(TIMx, -dst->FilteredOutput);
-			//TIMx->CCR2 = -dst->FilteredOutput;
+			LL_TIM_OC_SetCompareCH2(TIMx, -dst->output);
+			//TIMx->CCR2 = -dst->output;
 			break;
 		}
 		case 3:
 		{
-			LL_TIM_OC_SetCompareCH3(TIMx, -dst->FilteredOutput);
-			//TIMx->CCR3 = -dst->FilteredOutput;
+			LL_TIM_OC_SetCompareCH3(TIMx, -dst->output);
+			//TIMx->CCR3 = -dst->output;
 			break;
 		}
 		case 4:
 		{
-			LL_TIM_OC_SetCompareCH4(TIMx, -dst->FilteredOutput);
-			//TIMx->CCR4 = -dst->FilteredOutput;
+			LL_TIM_OC_SetCompareCH4(TIMx, -dst->output);
+			//TIMx->CCR4 = -dst->output;
 			break;
 		}
 		}
@@ -330,26 +312,26 @@ void PID_Control_Velocity(PID* dst, DIRECTION* DIRx, ENCODER* ENx, GPIO_TypeDef*
 		{
 		case 1:
 		{
-			LL_TIM_OC_SetCompareCH1(TIMx, dst->FilteredOutput);
-			//TIMx->CCR1 = dst->FilteredOutput;
+			LL_TIM_OC_SetCompareCH1(TIMx, dst->output);
+			//TIMx->CCR1 = dst->output;
 			break;
 		}
 		case 2:
 		{
-			LL_TIM_OC_SetCompareCH2(TIMx, dst->FilteredOutput);
-			//TIMx->CCR2 = dst->FilteredOutput;
+			LL_TIM_OC_SetCompareCH2(TIMx, dst->output);
+			//TIMx->CCR2 = dst->output;
 			break;
 		}
 		case 3:
 		{
-			LL_TIM_OC_SetCompareCH3(TIMx, dst->FilteredOutput);
-			//TIMx->CCR3 = dst->FilteredOutput;
+			LL_TIM_OC_SetCompareCH3(TIMx, dst->output);
+			//TIMx->CCR3 = dst->output;
 			break;
 		}
 		case 4:
 		{
-			LL_TIM_OC_SetCompareCH4(TIMx, dst->FilteredOutput);
-			//TIMx->CCR4 = dst->FilteredOutput;
+			LL_TIM_OC_SetCompareCH4(TIMx, dst->output);
+			//TIMx->CCR4 = dst->output;
 			break;
 		}
 		}
